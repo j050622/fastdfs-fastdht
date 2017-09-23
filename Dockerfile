@@ -20,21 +20,23 @@ RUN yum install -y zlib zlib-devel pcre pcre-devel gcc gcc-c++ openssl openssl-d
 #配置环境变量
 ENV CENTOS_VERSION=7 \
 	FASTDFS_PATH=/home/imlzw/fastdfs \
-    BERKELEY_DB_VERSION=6.2.23
+    BERKELEY_DB_VERSION=6.2.23 \
+    LIB_FAST_COMMON_VERSION=1.0.7 \
+    FASTDHT_VERSION=7fac37e9a8e2c9ee2d4ccc309f96dbd35f2e0403
 
 #创建必要的目录
 RUN mkdir -p ${FASTDFS_PATH}/fastdht
 
 #下载
-RUN wget https://github.com/happyfish100/libfastcommon/archive/master.zip -P ${FASTDFS_PATH}/download/libfastcommon
-RUN wget https://github.com/happyfish100/fastdht/archive/master.zip -P ${FASTDFS_PATH}/download/fastdht 
+RUN wget https://github.com/happyfish100/libfastcommon/archive/V${LIB_FAST_COMMON_VERSION}.zip -P ${FASTDFS_PATH}/download/libfastcommon
+RUN wget https://github.com/happyfish100/fastdht/archive/${FASTDHT_VERSION}.zip -P ${FASTDFS_PATH}/download/fastdht 
 RUN wget "http://download.oracle.com/berkeley-db/db-${BERKELEY_DB_VERSION}.tar.gz" -P ${FASTDFS_PATH}/download 
-RUN unzip ${FASTDFS_PATH}/download/libfastcommon/master.zip -d ${FASTDFS_PATH}/download/libfastcommon \
- && unzip ${FASTDFS_PATH}/download/fastdht/master.zip -d ${FASTDFS_PATH}/download/fastdht \
+RUN unzip ${FASTDFS_PATH}/download/libfastcommon/V${LIB_FAST_COMMON_VERSION}.zip -d ${FASTDFS_PATH}/download/libfastcommon \
+ && unzip ${FASTDFS_PATH}/download/fastdht/${FASTDHT_VERSION}.zip -d ${FASTDFS_PATH}/download/fastdht \
  && tar zxvf ${FASTDFS_PATH}/download/db-${BERKELEY_DB_VERSION}.tar.gz -C ${FASTDFS_PATH}/download
 
 #安装libfastcommon
-WORKDIR ${FASTDFS_PATH}/download/libfastcommon/libfastcommon-master
+WORKDIR ${FASTDFS_PATH}/download/libfastcommon/libfastcommon-${LIB_FAST_COMMON_VERSION}
 RUN ["/bin/bash", "-c", "./make.sh && ./make.sh install"]
  
 #安装berkeley db
@@ -44,7 +46,7 @@ RUN ../dist/configure --prefix=/usr/local/db-${BERKELEY_DB_VERSION} \
  && make install
 
 #安装fastdht
-WORKDIR ${FASTDFS_PATH}/download/fastdht/fastdht-master
+WORKDIR ${FASTDFS_PATH}/download/fastdht/fastdht-${FASTDHT_VERSION}
 RUN sed -i "s?CFLAGS='-Wall -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE'?CFLAGS='-Wall -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/db-${BERKELEY_DB_VERSION}/include/ -L/usr/local/db-${BERKELEY_DB_VERSION}/lib/'?" make.sh 
 RUN ["/bin/bash", "-c", "./make.sh && ./make.sh install"] 
 RUN cp /usr/local/db-${BERKELEY_DB_VERSION}/lib/libdb-${BERKELEY_DB_VERSION:0:3}.so /usr/lib64
