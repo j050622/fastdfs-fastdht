@@ -12,13 +12,13 @@ fastdfs的服务集合，包含tracker与storage服务，集成阿里云的yum.r
 # 启动命令
 ```java
 # 172.17.0.2
-docker run -dit -p 181:80 -p 22122:22122 --name tracker1 imlzw/fastdfs-tracker
+docker run -dit -p 181:80 -p 22122:22122 --name tracker1 manuku/fastdfs-tracker
 # 172.17.0.3
-docker run -dit -p 182:80 -p 22123:22122 --name tracker2 imlzw/fastdfs-tracker
+docker run -dit -p 182:80 -p 22123:22122 --name tracker2 manuku/fastdfs-tracker
 # 172.17.0.4
-docker run -dit -p 281:80 -p 23000:23000 --name u_group1_storage1 --link tracker1:tracker1 --link tracker2:tracker2 imlzw/fastdfs-storage-dht
+docker run -dit -p 281:80 -p 23000:23000 --name u_group1_storage1 --link tracker1:tracker1 --link tracker2:tracker2 manuku/fastdfs-storage-dht
 # 172.17.0.5
-docker run -dit -p 282:80 -p 23001:23000 --name u_group1_storage2 --link tracker1:tracker1 --link tracker2:tracker2 imlzw/fastdfs-storage-dht
+docker run -dit -p 282:80 -p 23001:23000 --name u_group1_storage2 --link tracker1:tracker1 --link tracker2:tracker2 manuku/fastdfs-storage-dht
 # 172.17.0.5
 docker run -dit -p 282:80 -p 23001:23000 --name u_group1_storage2 --link tracker1:tracker1 --link tracker2:tracker2 imlzw/fastdfs-storage-dht
 ```
