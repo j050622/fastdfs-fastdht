@@ -12,17 +12,16 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backu
 	&& wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo \
 	&& yum clean all \
 	&& yum makecache 
-	
+
 #安装工具集
 RUN yum install -y zlib zlib-devel pcre pcre-devel gcc gcc-c++ openssl openssl-devel libevent libevent-devel perl unzip net-tools git
 
-	
 #配置环境变量
 ENV CENTOS_VERSION=7 \
-	FASTDFS_PATH=/home/imlzw/fastdfs \
-    BERKELEY_DB_VERSION=6.2.23 \
-    LIB_FAST_COMMON_VERSION=1.0.7 \
-    FASTDHT_VERSION=7fac37e9a8e2c9ee2d4ccc309f96dbd35f2e0403
+  FASTDFS_PATH=/home/imlzw/fastdfs \
+  BERKELEY_DB_VERSION=6.2.23 \
+  IB_FAST_COMMON_VERSION=1.0.36 \
+  ASTDHT_VERSION=7fac37e9a8e2c9ee2d4ccc309f96dbd35f2e0403
 
 #创建必要的目录
 RUN mkdir -p ${FASTDFS_PATH}/fastdht
@@ -38,7 +37,7 @@ RUN unzip ${FASTDFS_PATH}/download/libfastcommon/V${LIB_FAST_COMMON_VERSION}.zip
 #安装libfastcommon
 WORKDIR ${FASTDFS_PATH}/download/libfastcommon/libfastcommon-${LIB_FAST_COMMON_VERSION}
 RUN ["/bin/bash", "-c", "./make.sh && ./make.sh install"]
- 
+
 #安装berkeley db
 WORKDIR ${FASTDFS_PATH}/download/db-${BERKELEY_DB_VERSION}/build_unix
 RUN ../dist/configure --prefix=/usr/local/db-${BERKELEY_DB_VERSION} \
@@ -57,7 +56,7 @@ COPY fdht_config/* /etc/fdht/
 COPY ["start","stop","/home/imlzw/"]
 RUN chmod +x /home/imlzw/start \
   && chmod +x /home/imlzw/stop \
-  && ln -s /home/imlzw/start /usr/local/bin/start_fdht \ 
+  && ln -s /home/imlzw/start /usr/local/bin/start_fdht \
   && ln -s /home/imlzw/stop /usr/local/bin/stop_fdht
 
 CMD ["bash","start_fdht"] 
