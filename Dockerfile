@@ -20,7 +20,7 @@ RUN yum install -y zlib zlib-devel pcre pcre-devel gcc gcc-c++ openssl openssl-d
 ENV CENTOS_VERSION=7 \
   FASTDFS_PATH=/home/imlzw/fastdfs \
   BERKELEY_DB_VERSION=6.2.23 \
-  IB_FAST_COMMON_VERSION=1.0.36 \
+  LIB_FAST_COMMON_VERSION=1.0.36 \
   ASTDHT_VERSION=7fac37e9a8e2c9ee2d4ccc309f96dbd35f2e0403
 
 #创建必要的目录
